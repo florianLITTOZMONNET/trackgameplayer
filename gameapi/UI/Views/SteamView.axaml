@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:UI.ViewModels"
+             x:Class="UI.Views.SteamView"
+             x:DataType="vm:SteamViewModel">
+
+    <StackPanel Background="#100c08" Spacing="10" Margin="20">
+
+        <Button Command="{Binding BackCommand}" Content="← Back"
+                Background="Transparent" Foreground="#888" Padding="0,4"/>
+
+        <TextBlock Text="Steam Library Search"
+                   Foreground="#e0d8d0" FontSize="18" FontWeight="Bold"/>
+
+        <TextBox  Text="{Binding InputText}"
+                  Watermark="Enter Steam ID…"
+                  Background="#3D3938" Foreground="White"/>
+
+        <Button   Command="{Binding SearchCommand}" Content="Search"
+                  Background="#3D3938" Foreground="White"/>
+
+        <TextBlock Text="{Binding ResultText}"
+                   Foreground="#c0b8b0" TextWrapping="Wrap"/>
+    </StackPanel>
+</UserControl>

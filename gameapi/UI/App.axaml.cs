@@ -31,7 +31,7 @@ public partial class App : Avalonia.Application
 
         var dbPath = config["Database:Path"] ?? "my_steam_data.db";
         services.AddSingleton(_ => new SteamDatabaseManager(dbPath));
-        services.AddTransient<MainWindowViewModel>();
+        services.AddSingleton<MainWindowViewModel>();
 
         Services = services.BuildServiceProvider();
 

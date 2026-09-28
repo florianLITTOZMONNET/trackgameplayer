@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:UI.ViewModels"
+             x:Class="UI.Views.SelectorView"
+             x:DataType="vm:SelectorViewModel">
+
+    <StackPanel Background="#100c08" Spacing="20"
+                HorizontalAlignment="Center" VerticalAlignment="Center"
+                Width="300">
+
+        <TextBlock Text="Choose a data source"
+                   Foreground="#e0d8d0" FontSize="20" FontWeight="Bold"
+                   HorizontalAlignment="Center"/>
+
+        <Button Command="{Binding GoSteamCommand}"   Content="🎮  Steam"
+                Background="#1b2838" Foreground="White"
+                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                Padding="12,10" FontSize="15"/>
+
+        <Button Command="{Binding GoRiotCommand}"    Content="⚔️  Riot Games"
+                Background="#c8392b" Foreground="White"
+                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                Padding="12,10" FontSize="15"/>
+
+        <Button Command="{Binding GoSpotifyCommand}" Content="🎵  Spotify"
+                Background="#1db954" Foreground="White"
+                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                Padding="12,10" FontSize="15"/>
+    </StackPanel>
+</UserControl>
