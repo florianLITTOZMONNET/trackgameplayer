@@ -34,7 +34,7 @@ public class SteamDatabaseManager : IDisposable
     public void MarkGameSearched(string id) => _games.MarkSearched(id);
     public void RefreshGameSearchStatus() => _games.RefreshSearchStatus();
     
-    public string? gameName(string id)=> _games.GetById(id)?.Name;
+    public string? GameName(string id)=> _games.GetById(id)?.Name;
 
     // Badges 
     public bool AddBadge(string id, string? appid, string? commuId, int? foil, int scarcity)
@@ -43,10 +43,11 @@ public class SteamDatabaseManager : IDisposable
     
     
     //Junc-game-player
-    
-    public bool linkGame(string Pid, string Gid)=> _juncPlayerGame.link(Pid, Gid);
-    public bool linkGames(string Pid, string[] Gid)=> _juncPlayerGame.linkLibrary(Pid, Gid);
-    public List<string>? GetLibrary(string Pid)=> _juncPlayerGame.getLibrary(Pid);
+
+    public bool LinkGame(string pid, string gid, string hours) => _juncPlayerGame.link(pid, gid, hours);
+    public bool LinkGames(string pid, string[] gid, string[] hours)=> _juncPlayerGame.linkLibrary(pid, gid, hours);
+    public List<string>? GetLibrary(string pid)=> _juncPlayerGame.getLibrary(pid);
+    public string? GetLibraryHours(string pid)=> _juncPlayerGame.getGameHours(pid);
     
     //  Junc-badge-player
 

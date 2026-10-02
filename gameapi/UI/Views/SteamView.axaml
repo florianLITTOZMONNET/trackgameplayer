@@ -1,25 +1,61 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:UI.ViewModels"
+             xmlns:services="clr-namespace:UI.Services"
+             xmlns:ui="clr-namespace:Core.Models.Ui;assembly=Core"
              x:Class="UI.Views.SteamView"
              x:DataType="vm:SteamViewModel">
 
-    <StackPanel Background="#100c08" Spacing="10" Margin="20">
+    <Grid RowDefinitions="Auto,*" Background="#100c08" Margin="20">
 
-        <Button Command="{Binding BackCommand}" Content="← Back"
-                Background="Transparent" Foreground="#888" Padding="0,4"/>
+        <StackPanel Grid.Row="0" Spacing="10">
+            <Button Command="{Binding BackCommand}" Content="← Back"
+                    Background="Transparent" Foreground="#888" Padding="0,4"/>
 
-        <TextBlock Text="Steam Library Search"
-                   Foreground="#e0d8d0" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Text="Steam Library Search"
+                       Foreground="#e0d8d0" FontSize="18" FontWeight="Bold"/>
 
-        <TextBox  Text="{Binding InputText}"
-                  Watermark="Enter Steam ID…"
-                  Background="#3D3938" Foreground="White"/>
+            <TextBox Text="{Binding InputText}"
+                     Watermark="Enter Steam ID…"
+                     Background="#3D3938" Foreground="White"/>
 
-        <Button   Command="{Binding SearchCommand}" Content="Search"
-                  Background="#3D3938" Foreground="White"/>
+            <Button Command="{Binding SearchCommand}" Content="Search"
+                    Background="#3D3938" Foreground="White"/>
 
-        <TextBlock Text="{Binding ResultText}"
-                   Foreground="#c0b8b0" TextWrapping="Wrap"/>
-    </StackPanel>
+            <TextBlock Text="{Binding ResultText}"
+                       Foreground="#c0b8b0"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" Margin="0,10,0,0"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding Games}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="ui:GameResult">
+                        <Border BorderBrush="DarkGray" BorderThickness="0,0,0,1">
+                            <Grid ColumnDefinitions="80,*,*" Margin="4">
+                                <services:AsyncImage Grid.Column="0"
+                                                     Url="{Binding BannerUrl}"
+                                                     Width="80" Height="30"
+                                                     Stretch="UniformToFill"/>
+                                <TextBlock Grid.Column="1" Padding="8,0,0,0"
+                                           Text="{Binding Name}"
+                                           ToolTip.Tip="{Binding Name}"
+                                           TextTrimming="CharacterEllipsis"
+                                           Foreground="#e0d8d0"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Padding="8,0,0,0"
+                                           Text="{Binding hours}"
+                                           ToolTip.Tip="{Binding hours}"
+                                           TextTrimming="CharacterEllipsis"
+                                           Foreground="#e0d8d0"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+    </Grid>
 </UserControl>

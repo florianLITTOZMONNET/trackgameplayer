@@ -13,7 +13,7 @@ public class GameOwnedStats
 {
     public int Appid { get; set; }
     public string Name { get; set; } = "";
-    public int Playtime_forever { get; set; }
+    public long Playtime_forever { get; set; }
     public int Playtime_2weeks { get; set; }
     public string? Img_logo_url { get; set; }
     public bool Has_community_visible_stats { get; set; }

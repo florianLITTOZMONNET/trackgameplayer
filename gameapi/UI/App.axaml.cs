@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -29,7 +30,10 @@ public partial class App : Avalonia.Application
         services.AddHttpClient<SteamLibraryClient>();
         services.AddHttpClient<SteamBadgeClient>();
 
-        var dbPath = config["Database:Path"] ?? "my_steam_data.db";
+        var solutionDir = Path.GetFullPath(
+            Path.Combine(AppContext.BaseDirectory, "../../../..") 
+        );
+        var dbPath = Path.Combine(solutionDir, "my_steam_data.db");
         services.AddSingleton(_ => new SteamDatabaseManager(dbPath));
         services.AddSingleton<MainWindowViewModel>();
 

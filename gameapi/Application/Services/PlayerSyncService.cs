@@ -1,6 +1,7 @@
 using System.Net;
 using Infrastructure.ApiClients.Steam;
 using Infrastructure.Database.Steam;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace Application.Services;
 
@@ -28,7 +29,6 @@ public class PlayerSyncService
             try
             {
                 var library = await _steamLibraryApi.GetLibraryAsync(id);
-
                 if (library == null || library.Games.Count == 0)
                 {
                     Console.WriteLine($"[{id}] Empty/private, skipping.");
@@ -39,7 +39,7 @@ public class PlayerSyncService
                     foreach (var game in library.Games)
                     {
                         _db.AddGame(game.Appid.ToString(), game.Name);
-                        _db.linkGame(id, game.Appid.ToString());
+                        _db.LinkGame(id, game.Appid.ToString(), game.Playtime_forever.ToString());
                     }
 
                     _db.MarkPlayerSearched(id);

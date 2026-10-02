@@ -18,7 +18,10 @@ services.AddHttpClient<SteamPlayerClient>();
 services.AddHttpClient<SteamLibraryClient>();
 services.AddHttpClient<SteamBadgeClient>();
 services.AddHttpClient<ok2>();        
-var dbPath = config["Database:Path"] ?? "my_steam_data.db";
+var solutionDir = Path.GetFullPath(
+    Path.Combine(AppContext.BaseDirectory, "../../../..") 
+);
+var dbPath = Path.Combine(solutionDir, "my_steam_data.db");
 services.AddSingleton(_ => new SteamDatabaseManager(dbPath));
 services.AddTransient<PlayerSyncService>();
 services.AddTransient<BadgeSyncService>();
@@ -35,6 +38,8 @@ var choice = Console.ReadLine();
 
 if (choice == "1")
 {
+    var db = provider.GetRequiredService<SteamDatabaseManager>();
+    db.AddPlayer("76561198309816250");
     var service = provider.GetRequiredService<PlayerSyncService>();
     await service.SyncPlayerLibrariesAsync();
 }
