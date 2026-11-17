@@ -32,12 +32,12 @@ public class SteamViewModel : ViewModelBase
     static string Format(string s)
     {
         long x = long.Parse(s);
-        long y = x / 31536000; x %= 31536000;
-        long m = x / 2592000;  x %= 2592000;
-        long h = x / 3600;     x %= 3600;
-        long min = x / 60;     x %= 60;
-
-        return $"{y}Y:{m:00}M:{h:00}h:{min:00}min:{x:00}s";
+        long y = x / 525600;   x %= 525600;
+        long m = x / 43800;    x %= 43800;
+        long d = x / 1440;     x %= 1440;
+        long h = x / 60;       x %= 60;
+        long min = x;
+        return $"{y}Y:{m:00}M:{d:00}D:{h:00}h:{min:00}min";
     }
 
     public SteamViewModel(Action<ViewModelBase> navigate)
@@ -46,15 +46,15 @@ public class SteamViewModel : ViewModelBase
 
         SearchCommand = ReactiveCommand.Create(() =>
         {
-           
-            var gameIds = _db.GetLibrary(InputText.Trim());
+            string player_id = InputText.Trim();
+            var gameIds = _db.GetLibrary(player_id);
             Games = gameIds is { Count: > 0 }
                 ? gameIds.Select(id => new GameResult
                 {
                     Id = id,
                     Name = _db.GameName(id) ?? id,
                     BannerUrl = $"https://cdn.akamai.steamstatic.com/steam/apps/{id}/header.jpg",
-                    hours = Format(_db.GetLibraryHours(id))
+                    hours = Format(_db.GetGameHours(player_id,id))
                 }).ToList()
                 : [];
 

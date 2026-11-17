@@ -29,11 +29,8 @@ public partial class App : Avalonia.Application
         services.AddHttpClient<SteamPlayerClient>();
         services.AddHttpClient<SteamLibraryClient>();
         services.AddHttpClient<SteamBadgeClient>();
-
-        var solutionDir = Path.GetFullPath(
-            Path.Combine(AppContext.BaseDirectory, "../../../..") 
-        );
-        var dbPath = Path.Combine(solutionDir, "my_steam_data.db");
+        
+        var dbPath = Core.DatabaseLocator.Db("my_steam_data.db", config["Data:Directory"]);
         services.AddSingleton(_ => new SteamDatabaseManager(dbPath));
         services.AddSingleton<MainWindowViewModel>();
 

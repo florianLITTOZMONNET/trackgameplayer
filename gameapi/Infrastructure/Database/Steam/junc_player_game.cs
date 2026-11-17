@@ -59,12 +59,13 @@ public class junc_player_game : BaseDatabase
         return result;
     }
 
-    public string? getGameHours(string gameId)
+    public string? getGameHours(string  playerId,string gameId)
     {
         var result = "";
         using var cmd = _db.CreateCommand();
-        cmd.CommandText = "SELECT hours_played FROM juncPlayerGame WHERE game_id=@gameId";
-        cmd.Parameters.AddWithValue("@gameId", gameId);
+        cmd.CommandText = cmd.CommandText = "SELECT hours_played FROM juncPlayerGame WHERE player_id=@p AND game_id=@g";
+        cmd.Parameters.AddWithValue("@p", playerId);
+        cmd.Parameters.AddWithValue("@g", playerId);
         using var reader = cmd.ExecuteReader();
         while (reader.Read())
         {

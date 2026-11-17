@@ -47,7 +47,7 @@ public class SteamDatabaseManager : IDisposable
     public bool LinkGame(string pid, string gid, string hours) => _juncPlayerGame.link(pid, gid, hours);
     public bool LinkGames(string pid, string[] gid, string[] hours)=> _juncPlayerGame.linkLibrary(pid, gid, hours);
     public List<string>? GetLibrary(string pid)=> _juncPlayerGame.getLibrary(pid);
-    public string? GetLibraryHours(string pid)=> _juncPlayerGame.getGameHours(pid);
+    public string? GetGameHours(string pid,string gid)=> _juncPlayerGame.getGameHours(pid,gid);
     
     //  Junc-badge-player
 
