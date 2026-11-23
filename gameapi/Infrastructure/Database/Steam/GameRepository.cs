@@ -12,6 +12,8 @@ public class GameRepository : BaseDatabase
             CREATE TABLE IF NOT EXISTS Games (
                 game_id TEXT PRIMARY KEY,
                 name TEXT NOT NULL UNIQUE,
+                img_logo_url TEXT,
+                has_community_visible_stats INTEGER NOT NULL DEFAULT 0,
                 search INTEGER DEFAULT 0,
                 time TEXT DEFAULT NULL
             )");

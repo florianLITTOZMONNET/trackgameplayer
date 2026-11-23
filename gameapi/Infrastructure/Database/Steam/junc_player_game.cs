@@ -13,7 +13,9 @@ public class junc_player_game : BaseDatabase
         CREATE TABLE IF NOT EXISTS juncPlayerGame (
             player_id TEXT,
             game_id TEXT,
-            hours_played TEXT,
+            playtime_forever INTEGER NOT NULL DEFAULT 0,
+            playtime_2weeks INTEGER NOT NULL DEFAULT 0,
+            last_played_at INTEGER NOT NULL DEFAULT 0,
             PRIMARY KEY(player_id, game_id),
             FOREIGN KEY(game_id) REFERENCES Games(game_id),
             FOREIGN KEY(player_id) REFERENCES PlayersIds(player_id)
@@ -26,10 +28,10 @@ public class junc_player_game : BaseDatabase
         {
             using var cmd = _db.CreateCommand();
             cmd.Transaction = tx;
-            cmd.CommandText = "INSERT OR IGNORE INTO juncPlayerGame (player_id,game_id,hours_played) VALUES (@player_id,@game_id,@hours_played)";
+            cmd.CommandText = "INSERT OR IGNORE INTO juncPlayerGame (player_id,game_id,playtime_forever) VALUES (@player_id,@game_id,@playtime_forever)";
             cmd.Parameters.AddWithValue("@player_id", playerId);
             cmd.Parameters.AddWithValue("@game_id", gameId);
-            cmd.Parameters.AddWithValue("@hours_played", hours);
+            cmd.Parameters.AddWithValue("@playtime_forever", hours);
             return cmd.ExecuteNonQuery() > 0;
         }
         catch { return false; }
@@ -63,9 +65,9 @@ public class junc_player_game : BaseDatabase
     {
         var result = "";
         using var cmd = _db.CreateCommand();
-        cmd.CommandText = cmd.CommandText = "SELECT hours_played FROM juncPlayerGame WHERE player_id=@p AND game_id=@g";
+        cmd.CommandText = cmd.CommandText = "SELECT playtime_forever FROM juncPlayerGame WHERE player_id=@p AND game_id=@g";
         cmd.Parameters.AddWithValue("@p", playerId);
-        cmd.Parameters.AddWithValue("@g", playerId);
+        cmd.Parameters.AddWithValue("@g", gameId);
         using var reader = cmd.ExecuteReader();
         while (reader.Read())
         {

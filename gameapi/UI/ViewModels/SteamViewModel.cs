@@ -29,16 +29,15 @@ public class SteamViewModel : ViewModelBase
     public ICommand BackCommand   { get; }
     
     
-    static string Format(string s)
+    static string Format(long totalMinutes)
     {
-        long x = long.Parse(s);
-        long y = x / 525600;   x %= 525600;
-        long m = x / 43800;    x %= 43800;
-        long d = x / 1440;     x %= 1440;
-        long h = x / 60;       x %= 60;
-        long min = x;
-        return $"{y}Y:{m:00}M:{d:00}D:{h:00}h:{min:00}min";
+        long h = totalMinutes / 60;
+        long tenth = (totalMinutes % 60) / 6;   // 0-9
+        return $"{h}.{tenth}h";
     }
+
+    static string Format(string s) =>
+        long.TryParse(s, out var m) ? Format(m) : "0.0h";
 
     public SteamViewModel(Action<ViewModelBase> navigate)
     {

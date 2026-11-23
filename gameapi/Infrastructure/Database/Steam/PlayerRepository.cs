@@ -11,6 +11,14 @@ public class PlayerRepository : BaseDatabase
         Execute(@"
             CREATE TABLE IF NOT EXISTS PlayersIds (
                 player_id TEXT PRIMARY KEY,
+                Personaname TEXT,
+                avatar_full STRING,
+                contry_code TEXT,
+                visibility INTEGER NOT NULL,
+                time_created INTEGER NOT NULL,
+                last_logoff INTEGER DEFAULT 0,
+                steam_lvl INTEGER DEFAULT 0,
+                xp INTEGER dEFAULT 0,
                 search INTEGER DEFAULT 0,
                 time TEXT DEFAULT NULL
             )");
