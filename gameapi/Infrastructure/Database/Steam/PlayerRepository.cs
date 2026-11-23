@@ -36,18 +36,7 @@ public class PlayerRepository : BaseDatabase
         }
         catch { return false; }
     }
-
-    public bool AddId(string id, Player player)
-    {
-        try
-        {
-            using var cmd = _db.CreateCommand();
-            cmd.CommandText = "INSERT OR INGORE INTO PlayersIds (player_id) VALUES (@id)";
-            return cmd.ExecuteNonQuery() > 0;
-        }
-        catch
-        { return false; }
-    }
+    
 
     public int AddIds(List<string> ids)
     {
