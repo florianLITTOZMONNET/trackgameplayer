@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Core.Db;
 
 namespace Infrastructure.Database.Steam;
@@ -14,8 +15,8 @@ public class PlayerRepository : BaseDatabase
                 Personaname TEXT,
                 avatar_full STRING,
                 contry_code TEXT,
-                visibility INTEGER NOT NULL,
-                time_created INTEGER NOT NULL,
+                visibility INTEGER NOT NULL DEFAULT 1,
+                time_created INTEGER NOT NULL DEFAULT 0,
                 last_logoff INTEGER DEFAULT 0,
                 steam_lvl INTEGER DEFAULT 0,
                 xp INTEGER dEFAULT 0,
@@ -29,11 +30,23 @@ public class PlayerRepository : BaseDatabase
         try
         {
             using var cmd = _db.CreateCommand();
-            cmd.CommandText = "INSERT OR IGNORE INTO PlayersIds (player_id) VALUES (@id)";
+            cmd.CommandText = "INSERT OR IGNORE INTO PlayersIds (player_id, ) VALUES (@id)";
             cmd.Parameters.AddWithValue("@id", id);
             return cmd.ExecuteNonQuery() > 0;
         }
         catch { return false; }
+    }
+
+    public bool AddId(string id, Player player)
+    {
+        try
+        {
+            using var cmd = _db.CreateCommand();
+            cmd.CommandText = "INSERT OR INGORE INTO PlayersIds (player_id) VALUES (@id)";
+            return cmd.ExecuteNonQuery() > 0;
+        }
+        catch
+        { return false; }
     }
 
     public int AddIds(List<string> ids)
