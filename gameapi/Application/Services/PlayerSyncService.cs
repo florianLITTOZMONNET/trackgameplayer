@@ -1,4 +1,5 @@
 using System.Net;
+using Core.Db;
 using Infrastructure.ApiClients.Steam;
 using Infrastructure.Database.Steam;
 using Microsoft.EntityFrameworkCore.Query.Internal;
@@ -38,7 +39,9 @@ public class PlayerSyncService
                 {
                     foreach (var game in library.Games)
                     {
-                        _db.AddGame(game.Appid.ToString(), game.Name);
+
+                        Game t=Game.MapOwnedstat(game);
+                        _db.AddGame(t);
                         _db.LinkGame(id, game.Appid.ToString(), game.Playtime_forever.ToString());
                     }
 

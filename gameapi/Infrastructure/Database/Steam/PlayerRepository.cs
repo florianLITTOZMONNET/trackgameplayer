@@ -1,5 +1,5 @@
-using System.Security.Cryptography;
 using Core.Db;
+using Microsoft.EntityFrameworkCore.Sqlite.Storage.Internal;
 
 namespace Infrastructure.Database.Steam;
 
@@ -14,7 +14,7 @@ public class PlayerRepository : BaseDatabase
                 player_id TEXT PRIMARY KEY,
                 Personaname TEXT,
                 avatar_full STRING,
-                contry_code TEXT,
+                country_code TEXT,
                 visibility INTEGER NOT NULL DEFAULT 1,
                 time_created INTEGER NOT NULL DEFAULT 0,
                 last_logoff INTEGER DEFAULT 0,
@@ -25,26 +25,43 @@ public class PlayerRepository : BaseDatabase
             )");
     }
 
-    public bool AddId(string id)
+    public bool AddPlayer(Player player)
     {
-        try
-        {
-            using var cmd = _db.CreateCommand();
-            cmd.CommandText = "INSERT OR IGNORE INTO PlayersIds (player_id, ) VALUES (@id)";
-            cmd.Parameters.AddWithValue("@id", id);
-            return cmd.ExecuteNonQuery() > 0;
-        }
-        catch { return false; }
+        using var cmd = _db.CreateCommand();
+        cmd.CommandText = """
+                          INSERT OR IGNORE INTO PlayersIds (player_id,personaname,avatar_full,contry_code,visibility,time_created,last_logoff) 
+                          VALUES (@id,@n,@avatar,@contry_code,@visibility,@time_created,@last_logoff);
+                          """;
+        cmd.Parameters.AddWithValue("@id", player.Id);
+        cmd.Parameters.AddWithValue("@n",player.Personaname);
+        cmd.Parameters.AddWithValue("@avatar",player.AvatarFull);
+        cmd.Parameters.AddWithValue("@contry_code",player.CountryCode);
+        cmd.Parameters.AddWithValue("@visibility",player.Visibility);
+        cmd.Parameters.AddWithValue("@time_created",player.TimeCreated ?? 0);
+        cmd.Parameters.AddWithValue("@last_logoff",player.LastLogoff ?? 0);
+        return cmd.ExecuteNonQuery() > 0;
+    }
+
+    public bool AddPlayer(string id)
+    {
+        using var cmd = _db.CreateCommand();
+        cmd.CommandText = "SELECT * FROM PlayersIds WHERE player_id = @id";
+        cmd.Parameters.AddWithValue("@id", id);
+        return cmd.ExecuteNonQuery() > 0;
+
     }
     
-
-    public int AddIds(List<string> ids)
+    public int AddPlayers(List<Player> players)
     {
         int count = 0;
-        using var tx = _db.BeginTransaction();
-        foreach (var id in ids)
-            if (AddId(id)) count++;
-        tx.Commit();
+        using var cmd = _db.CreateCommand();
+        foreach (var player in players)
+        {
+            if (AddPlayer(player))
+            {
+                count++;
+            }
+        }
         return count;
     }
 
@@ -55,7 +72,7 @@ public class PlayerRepository : BaseDatabase
         cmd.Parameters.AddWithValue("@id", id);
         using var reader = cmd.ExecuteReader();
         if (!reader.Read()) return null;
-        return new Player { Id = reader.GetString(0), Search = reader.GetBoolean(1) };
+        return Player.MapPlayer(reader);
     }
 
     public List<string> GetAll()
@@ -68,6 +85,19 @@ public class PlayerRepository : BaseDatabase
         return result;
     }
 
+    public List<Player> GetAllInfo()
+    {
+        var result = new List<Player>();
+        using var cmd = _db.CreateCommand();
+        cmd.CommandText = "SELECT * FROM PlayersIds";
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            result.Add(Player.MapPlayer(reader));
+        }
+        return result;
+    }
+    
     public void MarkSearched(string id)
     {
         using var cmd = _db.CreateCommand();
@@ -83,7 +113,7 @@ public class PlayerRepository : BaseDatabase
         cmd.CommandText = "SELECT * FROM PlayersIds WHERE search=0";
         using var reader = cmd.ExecuteReader();
         while (reader.Read())
-            result.Add(new Player { Id = reader.GetString(0), Search = false });
+            result.Add(Player.MapPlayer(reader));
         return result.Count > 0 ? result : null;
     }
 

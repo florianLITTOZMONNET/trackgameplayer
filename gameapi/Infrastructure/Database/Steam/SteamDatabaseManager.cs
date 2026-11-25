@@ -18,21 +18,26 @@ public class SteamDatabaseManager : IDisposable
     }
 
     // Players 
-    public bool AddPlayer(string id) => _players.AddId(id);
-    public int AddPlayers(List<string> ids) => _players.AddIds(ids);
-    public List<string>? GetAllPlayers() => _players.GetAll();
+    public bool AddPlayerId(string id) => _players.AddPlayer(id);
+    public bool AddPlayer(Player playerInfo) => _players.AddPlayer(playerInfo);
+    public int AddPlayers(List<Player> playersInfo) => _players.AddPlayers(playersInfo);
+    public Player? GetPlayer(string id) => _players.GetPlayer(id);
+    public List<string> GetAllId()=> _players.GetAll();
+    public List<Player> GetAll() => _players.GetAllInfo();
     public List<Player>? GetUnsearchedPlayers() => _players.GetUnsearchedPlayers();
     public void MarkPlayerSearched(string id) => _players.MarkSearched(id);
     public void RefreshPlayerSearchStatus() => _players.RefreshSearchStatus();
     public bool RemovePlayer(string id) => _players.DeleteId(id);
 
     //Games
-    public bool AddGame(string id, string name) => _games.AddGame(id, name);
+    public bool AddGame(Game game) => _games.AddGame(game);
     public List<Game>? GetAllGames() => _games.GetAll();
+    public List<string> GetAllGameIds() => _games.GetAllIds();
     public List<Game>? GetUnsearchedGames() => _games.GetUnsearched();
     public Game? GetRandomUnsearchedGame() => _games.GetRandomUnsearched();
     public void MarkGameSearched(string id) => _games.MarkSearched(id);
     public void RefreshGameSearchStatus() => _games.RefreshSearchStatus();
+    public bool RemoveGame(string id) => _games.DeleteId(id);
     
     public string? GameName(string id)=> _games.GetById(id)?.Name;
 

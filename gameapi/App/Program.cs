@@ -36,7 +36,7 @@ var choice = Console.ReadLine();
 if (choice == "1")
 {
     var db = provider.GetRequiredService<SteamDatabaseManager>();
-    db.AddPlayer("76561198309816250");
+    db.AddPlayerId("76561198309816250");
     var service = provider.GetRequiredService<PlayerSyncService>();
     await service.SyncPlayerLibrariesAsync();
 }

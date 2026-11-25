@@ -19,17 +19,18 @@ public class GameRepository : BaseDatabase
             )");
     }
 
-    public bool AddGame(string id, string name)
+    public bool AddGame(Game game)
     {
-        try
-        {
-            using var cmd = _db.CreateCommand();
-            cmd.CommandText = "INSERT OR IGNORE INTO Games (game_id,name) VALUES (@id,@name)";
-            cmd.Parameters.AddWithValue("@id", id);
-            cmd.Parameters.AddWithValue("@name", name);
-            return cmd.ExecuteNonQuery() > 0;
-        }
-        catch { return false; }
+        using var cmd = _db.CreateCommand();
+        cmd.CommandText = """
+                          INSERT OR IGNORE INTO Games (game_id,name,img_logo_url,has_community_visible_stats)
+                          VALUES (@id,@name,@img,@stats);
+                          """;
+        cmd.Parameters.AddWithValue("@id", game.game_id);
+        cmd.Parameters.AddWithValue("@name", game.Name);
+        cmd.Parameters.AddWithValue("@img", (object?)game.ImgLogoUrl ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@stats", game.HasCommunityVisibleStats ? 1 : 0);
+        return cmd.ExecuteNonQuery() > 0;
     }
 
     public Game? GetById(string id)
@@ -39,7 +40,28 @@ public class GameRepository : BaseDatabase
         cmd.Parameters.AddWithValue("@id", id);
         using var reader = cmd.ExecuteReader();
         if (!reader.Read()) return null;
-        return new Game { game_id = reader.GetString(0), Name = reader.GetString(1) };
+        return Game.MapGame(reader);
+    }
+
+    public List<string> GetAllIds()
+    {
+        var result = new List<string>();
+        using var cmd = _db.CreateCommand();
+        cmd.CommandText = "SELECT game_id FROM Games";
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read()) result.Add(reader.GetString(0));
+        return result;
+    }
+
+    public List<Game>? GetAll()
+    {
+        var result = new List<Game>();
+        using var cmd = _db.CreateCommand();
+        cmd.CommandText = "SELECT * FROM Games";
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+            result.Add(Game.MapGame(reader));
+        return result.Count > 0 ? result : null;
     }
 
     public void MarkSearched(string id)
@@ -57,7 +79,7 @@ public class GameRepository : BaseDatabase
         cmd.CommandText = "SELECT * FROM Games WHERE search=0";
         using var reader = cmd.ExecuteReader();
         while (reader.Read())
-            result.Add(new Game { game_id = reader.GetString(0), Name = reader.GetString(1) });
+            result.Add(Game.MapGame(reader));
         return result.Count > 0 ? result : null;
     }
 
@@ -67,23 +89,20 @@ public class GameRepository : BaseDatabase
         cmd.CommandText = "SELECT * FROM Games WHERE time IS NULL ORDER BY RANDOM() LIMIT 1";
         using var reader = cmd.ExecuteReader();
         if (!reader.Read()) return null;
-        return new Game { game_id = reader.GetString(0), Name = reader.GetString(1) };
-    }
-
-    public List<Game>? GetAll()
-    {
-        var result = new List<Game>();
-        using var cmd = _db.CreateCommand();
-        cmd.CommandText = "SELECT * FROM Games";
-        using var reader = cmd.ExecuteReader();
-        while (reader.Read())
-            result.Add(new Game { game_id = reader.GetString(0), Name = reader.GetString(1) });
-        return result.Count > 0 ? result : null;
+        return Game.MapGame(reader);
     }
 
     public void RefreshSearchStatus()
     {
         Execute("UPDATE Games SET search=0, time=NULL WHERE time <= DATE('now', '-4 months')");
+    }
+
+    public bool DeleteId(string id)
+    {
+        using var cmd = _db.CreateCommand();
+        cmd.CommandText = "DELETE FROM Games WHERE game_id=@id";
+        cmd.Parameters.AddWithValue("@id", id);
+        return cmd.ExecuteNonQuery() > 0;
     }
 
     public void Clear() => Execute("DELETE FROM Games");
